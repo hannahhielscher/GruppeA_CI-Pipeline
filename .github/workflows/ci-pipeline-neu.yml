@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-latest # there might be a better option
     steps:
       - name: Checkout main branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: workflow-test
           fetch-depth: 0
 
       - name: Checkout feature branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
@@ -62,8 +62,26 @@ jobs:
       build: ${{ steps.build.outputs.result }}
       test: ${{ steps.test.outputs.result }}
     steps:
-      - name: Checkout code
+      - name: Checkout main branch
         uses: actions/checkout@v4
+        with:
+          ref: workflow-test
+          fetch-depth: 0
+
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Simulate merge
+        id: merge
+        run: |
+          git config --global user.name 'hannahhielscher'
+          git config --global user.email 'hh057@hdm-stuttgart.de'
+          git checkout workflow-test
+          git merge --no-commit --no-ff project/CI-Pipeline
+          echo "merged_branch=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
         # Rest shall only run if there are changes in the frontend-module
       - name: Setup JDK
         run: echo "Setting up JDK..."
