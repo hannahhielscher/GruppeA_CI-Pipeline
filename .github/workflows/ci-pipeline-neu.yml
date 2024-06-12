@@ -8,32 +8,7 @@ on:
       - synchronize # whenever something is pushed to an open pr
 
 jobs:
-  simulate-merge:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout main branch
-        uses: actions/checkout@v4
-        with:
-          ref: workflow-test
-
-      - name: Checkout feature branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-
-      - name: Simulate merge
-        id: merge
-        run: |
-          git config --global user.name 'hannahhielscher'
-          git config --global user.email 'hh057@hdm-stuttgart.de'
-          git fetch origin
-          git checkout workflow-test
-          git merge --no-commit --no-ff project/CI-Pipeline
-          echo "merged_branch=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-  
-
   build-and-test-backend:
-    needs: simulate-merge
     outputs:
       lint: ${{ steps.lint.outputs.result }}
       build: ${{ steps.build.outputs.result }}
@@ -42,9 +17,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.simulate-merge.outputs.merged_branch }}
-
         # Rest shall only run if there are changes in the backend-module
       - name: Setup JDK
         run: echo "Setting up JDK..."
@@ -66,7 +38,6 @@ jobs:
           echo "Running Tests"
           echo "result=success" >> "$GITHUB_OUTPUT"
   build-and-test-frontend:
-    needs: simulate-merge
     runs-on: ubuntu-latest # there might be a better option
     outputs:
       lint: ${{ steps.lint.outputs.result }}
@@ -75,9 +46,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.simulate-merge.outputs.merged_branch }}
-
         # Rest shall only run if there are changes in the frontend-module
       - name: Setup JDK
         run: echo "Setting up JDK..."
