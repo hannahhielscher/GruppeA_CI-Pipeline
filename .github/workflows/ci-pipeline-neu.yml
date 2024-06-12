@@ -15,9 +15,24 @@ jobs:
       test: ${{ steps.test.outputs.result }}
     runs-on: ubuntu-latest # there might be a better option
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        # Rest shall only run if there are changes in the backend-module
+      - name: Checkout main branch
+        uses: actions/checkout@v3
+        with:
+          ref: workflow-test
+
+      - name: Checkout feature branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Simulate merge
+        id: merge
+        run: |
+          git config --global user.name 'hhh057@hdm-stuttgart.de'
+          git checkout workflow-test
+          git merge --no-commit --no-ff project/CI-Pipeline
+          echo "merged_branch=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
       - name: Setup JDK
         run: echo "Setting up JDK..."
       - name: Setup Gradle Project
