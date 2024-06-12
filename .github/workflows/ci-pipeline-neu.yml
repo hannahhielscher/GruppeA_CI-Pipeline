@@ -19,16 +19,19 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: workflow-test
+          fetch-depth: 0
 
       - name: Checkout feature branch
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
       - name: Simulate merge
         id: merge
         run: |
-          git config --global user.name 'hhh057@hdm-stuttgart.de'
+          git config --global user.name 'hannahhielscher'
+          git config --global user.email 'hh057@hdm-stuttgart.de'
           git checkout workflow-test
           git merge --no-commit --no-ff project/CI-Pipeline
           echo "merged_branch=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
