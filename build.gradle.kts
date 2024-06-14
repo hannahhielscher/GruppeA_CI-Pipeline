@@ -5,10 +5,12 @@ buildscript {
         mavenCentral()
     }
 }
+
+ */
 plugins {
-    id("org.jlleitschuh.gradle.ktlint") version "11.0.0" apply(false)
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
-*/
+
 
 repositories {
     mavenLocal()

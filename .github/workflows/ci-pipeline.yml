@@ -8,6 +8,9 @@ on:
     types:
       - opened # whenever a pr is created
       - synchronize # whenever something is pushed to an open pr
+  push_request:
+    branches:
+      - workflow-test
 
 jobs:
   build-and-test-backend:
@@ -27,7 +30,7 @@ jobs:
       - name: Lint
         id: lint
         run: |
-          echo "Linting kotlin modules"
+          ./gradlew ktlintCheck
           echo "result=success" >> "$GITHUB_OUTPUT"
       - name: Build Project
         id: build
