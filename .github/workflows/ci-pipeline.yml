@@ -60,7 +60,7 @@ jobs:
       - name: Lint
         id: lint
         run: |
-          ./gradlew ktlintCheck
+          ./gradlew ktlintCheck --info
           echo "result=success" >> "$GITHUB_OUTPUT"
       - name: Build Project
         id: build
