@@ -9,6 +9,7 @@ buildscript {
  */
 plugins {
     kotlin("jvm") version "1.5.31" apply false
+    kotlin("plugin.serialization") version "1.5.31" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
