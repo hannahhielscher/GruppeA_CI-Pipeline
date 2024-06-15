@@ -15,40 +15,14 @@ jobs:
       test: ${{ steps.test.outputs.result }}
     runs-on: ubuntu-latest # there might be a better option
     steps:
-      - name: Checkout main branch
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: workflow-test
-          fetch-depth: 0
 
-      - name: Print SHA of main branch (workflow-test)
+      - name: Print Git Info
         run: |
-          echo "SHA of main branch (workflow-test): $(git rev-parse HEAD)"
-
-      - name: Checkout feature branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
-
-      - name: Print SHA of feature branch (PR branch)
-        run: |
-          echo "SHA of feature branch (PR branch): $(git rev-parse HEAD)"
-            
-
-      - name: Simulate merge
-        id: merge
-        run: |
-          git config --global user.name 'hannahhielscher'
-          git config --global user.email 'hh057@hdm-stuttgart.de'
-          git checkout workflow-test
-          git merge --no-commit --no-ff project/CI-Pipeline
-          echo "SHA of merge commit: $(git rev-parse HEAD)"
-          echo "merged_branch=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-
-      - name: Print SHA after simulated merge
-        run: |
-          echo "SHA after simulated merge: $(git rev-parse HEAD)"
+          echo "Current branch: $(git branch --show-current)"
+          echo "Commit SHA: $(git rev-parse HEAD)"
+          git log -1
 
       - name: Setup JDK
         run: echo "Setting up JDK..."
@@ -76,26 +50,9 @@ jobs:
       build: ${{ steps.build.outputs.result }}
       test: ${{ steps.test.outputs.result }}
     steps:
-      - name: Checkout main branch
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: workflow-test
-          fetch-depth: 0
 
-      - name: Checkout feature branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
-
-      - name: Simulate merge
-        id: merge
-        run: |
-          git config --global user.name 'hannahhielscher'
-          git config --global user.email 'hh057@hdm-stuttgart.de'
-          git checkout workflow-test
-          git merge --no-commit --no-ff project/CI-Pipeline
-          echo "merged_branch=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
         # Rest shall only run if there are changes in the frontend-module
       - name: Setup JDK
         run: echo "Setting up JDK..."
