@@ -11,6 +11,7 @@ on:
   push_request:
     branches:
       - workflow-test
+      - -master
 
 jobs:
   build-and-test-backend:
