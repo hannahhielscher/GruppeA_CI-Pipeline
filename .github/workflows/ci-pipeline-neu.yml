@@ -1,0 +1,89 @@
+name: CI Pipeline Hanoi Towers
+on:
+  pull_request:
+    branches:
+      - workflow-test
+    types:
+      - opened # whenever a pr is created
+      - synchronize # whenever something is pushed to an open pr
+
+jobs:
+  build-and-test-backend:
+    outputs:
+      lint: ${{ steps.lint.outputs.result }}
+      build: ${{ steps.build.outputs.result }}
+      test: ${{ steps.test.outputs.result }}
+    runs-on: ubuntu-latest # there might be a better option
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Print Git Info
+        run: |
+          echo "Current branch: $(git branch --show-current)"
+          echo "Commit SHA: $(git rev-parse HEAD)"
+          git log -1
+
+      - name: Setup JDK
+        run: echo "Setting up JDK..."
+      - name: Setup Gradle Project
+        run: echo "Setting up Gradle Project..."
+      - name: Lint
+        id: lint
+        run: |
+          echo "Linting kotlin modules"
+          echo "result=success" >> "$GITHUB_OUTPUT"
+      - name: Build Project
+        id: build
+        run: |
+          echo "Linting kotlin modules"
+          echo "result=success" >> "$GITHUB_OUTPUT"
+      - name: Run Tests
+        id: test
+        run: |
+          echo "Running Tests"
+          echo "result=success" >> "$GITHUB_OUTPUT"
+  build-and-test-frontend:
+    runs-on: ubuntu-latest # there might be a better option
+    outputs:
+      lint: ${{ steps.lint.outputs.result }}
+      build: ${{ steps.build.outputs.result }}
+      test: ${{ steps.test.outputs.result }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+        # Rest shall only run if there are changes in the frontend-module
+      - name: Setup JDK
+        run: echo "Setting up JDK..."
+      - name: Setup Gradle Project
+        run: echo "Setting up Gradle Project..."
+      - name: Lint
+        id: lint
+        run: |
+          echo "Linting kotlin modules"
+          echo "result=success" >> "$GITHUB_OUTPUT"
+      - name: Build Project
+        id: build
+        run: |
+          echo "Linting kotlin modules"
+          echo "result=success" >> "$GITHUB_OUTPUT"
+      - name: Run Tests
+        id: test
+        run: |
+          echo "Running Tests"
+          echo "result=success" >> "$GITHUB_OUTPUT"
+  report:
+    needs:
+      - build-and-test-frontend
+      - build-and-test-backend
+    runs-on: ubuntu-latest # there might be a better option
+    steps:
+      - uses: actions/checkout@v4 # needed to access the following action
+        with:
+          fe_lint: ${{ needs.build-and-test-frontend.outputs.lint }}
+          fe_build: ${{ needs.build-and-test-frontend.outputs.build }}
+          fe_test: ${{ needs.build-and-test-frontend.outputs.test }}
+          be_lint: ${{ needs.build-and-test-backend.outputs.lint }}
+          be_build: ${{ needs.build-and-test-backend.outputs.build }}
+          be_test: ${{ needs.build-and-test-backend.outputs.test }}
