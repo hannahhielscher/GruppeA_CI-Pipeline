@@ -8,8 +8,8 @@ buildscript {
 
  */
 plugins {
-    kotlin("jvm") version "1.5.31"
-    kotlin("plugin.serialization") version "1.5.31"
+    kotlin("jvm") version "1.5.4"
+    kotlin("plugin.serialization") version "1.5.4"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
