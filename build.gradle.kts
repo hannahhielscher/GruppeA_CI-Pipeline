@@ -8,9 +8,11 @@ buildscript {
 
  */
 plugins {
-    kotlin("jvm") version "1.5.4"
-    kotlin("plugin.serialization") version "1.5.4"
+    kotlin("jvm") version "1.5.31" // Stelle sicher, dass dies kompatibel ist
+    kotlin("plugin.serialization") version "1.5.31" // Stelle sicher, dass dies kompatibel ist
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("org.jetbrains.compose") version "1.5.12"
+
 }
 
 
