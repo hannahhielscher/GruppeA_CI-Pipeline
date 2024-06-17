@@ -18,6 +18,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
       - name: Print Git Info
         run: |
           echo "Current branch: $(git branch --show-current)"
@@ -26,8 +31,10 @@ jobs:
 
       - name: Setup JDK
         run: echo "Setting up JDK..."
-      - name: Setup Gradle Project
-        run: echo "Setting up Gradle Project..."
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+
       - name: Lint
         id: lint
         run: |
@@ -36,12 +43,12 @@ jobs:
       - name: Build Project
         id: build
         run: |
-          echo "Linting kotlin modules"
+          ./gradlew -b ci.gradle package
           echo "result=success" >> "$GITHUB_OUTPUT"
       - name: Run Tests
         id: test
         run: |
-          echo "Running Tests"
+          ./gradlew test --tests StateTest
           echo "result=success" >> "$GITHUB_OUTPUT"
   build-and-test-frontend:
     runs-on: ubuntu-latest # there might be a better option
@@ -53,11 +60,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+
+
         # Rest shall only run if there are changes in the frontend-module
-      - name: Setup JDK
-        run: echo "Setting up JDK..."
-      - name: Setup Gradle Project
-        run: echo "Setting up Gradle Project..."
       - name: Lint
         id: lint
         run: |
@@ -70,8 +75,8 @@ jobs:
           echo "result=success" >> "$GITHUB_OUTPUT"
       - name: Run Tests
         id: test
-        run: |
-          echo "Running Tests"
+        run:
+
           echo "result=success" >> "$GITHUB_OUTPUT"
   report:
     needs:
