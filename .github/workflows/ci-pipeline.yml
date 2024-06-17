@@ -35,7 +35,6 @@ jobs:
         continue-on-error: true
       - name: Lint with GitHub Superlinter
         id: lint
-        run: echo "Linting Code"
         uses: github/super-linter@v4
         env:
           VALIDATE_KOTLIN: true
