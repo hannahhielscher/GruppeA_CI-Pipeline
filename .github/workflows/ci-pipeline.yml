@@ -38,7 +38,7 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_KOTLIN: true
-          FILTER_REGEX_INCLUDE: "^settings.gradle.kts|src/main$"
+          FILTER_REGEX_INCLUDE: "^hanoi-backend/src/main$"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Project
         id: build
@@ -72,7 +72,7 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_KOTLIN: true
-          FILTER_REGEX_INCLUDE: "^settings.gradle.kts$|^src/jsMain"
+          FILTER_REGEX_INCLUDE: "^src/jsMain$"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Project
         id: build
