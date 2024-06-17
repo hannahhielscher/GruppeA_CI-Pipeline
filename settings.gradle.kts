@@ -13,7 +13,7 @@ pluginManagement {
 
     plugins {
         kotlin("multiplatform").version(extra["kotlin.version"] as String) apply false
-        id("org.jetbrains.compose") version "1.6.10"
+        id("org.jetbrains.compose").version(extra["compose.version"] as String) apply false
         kotlin("plugin.serialization").version(extra["kotlin.version"] as String) apply false
         kotlin("jvm").version(extra["kotlin.version"] as String) apply false
         // id("io.ktor.plugin").version(extra["io.ktor.plugin"] as String) apply false
