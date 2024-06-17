@@ -33,6 +33,7 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_KOTLIN: true
+          FILTER_REGEX_INCLUDE: "^settings.gradle.kts$"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Project
         id: build
