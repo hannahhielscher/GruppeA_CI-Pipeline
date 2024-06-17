@@ -4,7 +4,7 @@ on:
     branches:
       - master
       - develop
-      - workflow-test # todo remove
+      - workflow-test
     types:
       - opened # whenever a pr is created
       - synchronize # whenever something is pushed to an open pr
@@ -25,25 +25,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         # Rest shall only run if there are changes in the backend-module
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
-            distribution: 'adopt'
-            java-version: '11'
-      - name: Setup Gradle Project
-        run: ./gradlew clean
+            java-version: '17'
+            distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
         continue-on-error: true
       - name: Lint with GitHub Superlinter
         id: lint
+        run: echo "Linting Code"
         uses: github/super-linter@v4
         env:
           VALIDATE_KOTLIN: true
-          FILTER_REGEX_INCLUDE: .*hanoi-backend/src/main/kotlin/hanoi.towers/application/routing.*
+          FILTER_REGEX_INCLUDE: .*hanoi-backend/src/main/kotlin/hanoi.towers/application/.*
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Project
         id: build
         run: |
-          echo "Building project..."
+          echo "Building Project"
+          ./gradlew build
           echo "result=success" >> "$GITHUB_OUTPUT"
       - name: Run Tests
         id: test
