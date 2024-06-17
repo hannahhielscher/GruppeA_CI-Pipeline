@@ -33,8 +33,6 @@ jobs:
       - name: Setup Gradle Project
         run: ./gradlew clean
         continue-on-error: true
-      - name: Install dependencies
-        run: ./gradlew dependencies
       - name: Lint with Superlinter
         id: lint
         uses: github/super-linter@v4
