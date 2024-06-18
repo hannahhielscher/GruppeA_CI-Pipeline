@@ -48,6 +48,7 @@ jobs:
         run: |
           ./gradlew test --tests StateTest
           echo "result=success" >> "$GITHUB_OUTPUT"
+
   build-and-test-frontend:
     runs-on: ubuntu-latest # there might be a better option
     outputs:
