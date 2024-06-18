@@ -36,6 +36,12 @@ jobs:
 
       - name: Run build
         run: ./gradlew build
+        env:
+          ENVIRONMENT: ${{ secrets.Environment }}
+          HANOI_FRONTEND_URL: ${{ secrets.HANOI_FRONTEND_URL }}
+          HANOI_FRONTEND_PORT: ${{ secrets.HANOI_FRONTEND_PORT }}
+          HANOI_BACKEND_URL: ${{ secrets.HANOI_BACKEND_URL }}
+          HANOI_BACKEND_PORT: ${{ secrets.HANOI_BACKEND_PORT}}
 
       - name: Run Tests
         id: test
