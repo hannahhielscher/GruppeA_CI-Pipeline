@@ -4,7 +4,7 @@ on:
     branches:
       - master
       - develop
-      - workflow-test # todo remove
+      - workflow-test
     types:
       - opened # whenever a pr is created
       - synchronize # whenever something is pushed to an open pr
@@ -20,24 +20,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         # Rest shall only run if there are changes in the backend-module
-      - name: Setup JDK
-        run: echo "Setting up JDK..."
-      - name: Setup Gradle Project
-        run: echo "Setting up Gradle Project..."
-      - name: Lint
-        id: lint
-        run: |
-          echo "Linting kotlin modules"
-          echo "result=success" >> "$GITHUB_OUTPUT"
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+            java-version: '17'
+            distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
       - name: Build Project
         id: build
         run: |
-          echo "Linting kotlin modules"
+          echo "Building Project"
           echo "result=success" >> "$GITHUB_OUTPUT"
       - name: Run Tests
         id: test
         run: |
           echo "Running Tests"
+          ./gradlew test :hanoi-backend
           echo "result=success" >> "$GITHUB_OUTPUT"
   build-and-test-frontend:
     runs-on: ubuntu-latest # there might be a better option
