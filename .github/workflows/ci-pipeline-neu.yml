@@ -2,7 +2,7 @@ name: CI Pipeline Hanoi Towers
 on:
   pull_request:
     branches:
-      - workflow-test
+      - master-clone
     types:
       - opened # whenever a pr is created
       - synchronize # whenever something is pushed to an open pr
@@ -17,31 +17,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '11'
 
-      - name: Print Git Info
-        run: |
-          echo "Current branch: $(git branch --show-current)"
-          echo "Commit SHA: $(git rev-parse HEAD)"
-          git log -1
-
-      - name: Setup JDK
-        run: echo "Setting up JDK..."
-      - name: Setup Gradle Project
-        run: echo "Setting up Gradle Project..."
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
       - name: Lint
         id: lint
         run: |
           echo "Linting kotlin modules"
           echo "result=success" >> "$GITHUB_OUTPUT"
-      - name: Build Project
-        id: build
+
+      - name: Clear Gradle cache
         run: |
-          echo "Linting kotlin modules"
-          echo "result=success" >> "$GITHUB_OUTPUT"
+          rm -rf ~/.gradle/caches/
+
+      - name: Run build
+        run: ./gradlew build
+
       - name: Run Tests
         id: test
         run: |
-          echo "Running Tests"
+          ./gradlew test --tests StateTest
           echo "result=success" >> "$GITHUB_OUTPUT"
   build-and-test-frontend:
     runs-on: ubuntu-latest # there might be a better option
@@ -53,11 +52,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+
+
         # Rest shall only run if there are changes in the frontend-module
-      - name: Setup JDK
-        run: echo "Setting up JDK..."
-      - name: Setup Gradle Project
-        run: echo "Setting up Gradle Project..."
       - name: Lint
         id: lint
         run: |
@@ -70,8 +67,8 @@ jobs:
           echo "result=success" >> "$GITHUB_OUTPUT"
       - name: Run Tests
         id: test
-        run: |
-          echo "Running Tests"
+        run:
+
           echo "result=success" >> "$GITHUB_OUTPUT"
   report:
     needs:
