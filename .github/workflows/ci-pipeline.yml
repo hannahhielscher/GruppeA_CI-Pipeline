@@ -36,12 +36,12 @@ jobs:
         id: build
         run: |
           echo "Building Project"
-          ./gradlew build
           echo "result=success" >> "$GITHUB_OUTPUT"
       - name: Run Tests
         id: test
         run: |
           echo "Running Tests"
+          ./gradlew test :hanoi-backend
           echo "result=success" >> "$GITHUB_OUTPUT"
   build-and-test-frontend:
     runs-on: ubuntu-latest # there might be a better option
