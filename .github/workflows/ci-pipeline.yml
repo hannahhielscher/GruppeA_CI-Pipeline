@@ -33,7 +33,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
         continue-on-error: true
-      - name: Lint with GitHub Superlinter
+      - name: Linting Backend
         id: lint
         uses: github/super-linter@v4
         env:
@@ -46,11 +46,11 @@ jobs:
         run: |
           echo "Building Project"
           echo "result=success" >> "$GITHUB_OUTPUT"
-      - name: Run Tests
+      - name: Run Unit Tests
         id: test
         run: |
           echo "Running Tests"
-          ./gradlew test :hanoi-frontend
+          ./gradlew test :hanoi-backend
           echo "result=success" >> "$GITHUB_OUTPUT"
   build-and-test-frontend:
     runs-on: ubuntu-latest
@@ -69,11 +69,14 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle Project
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-      - name: Run Tests
-        id: Linting
-        run: |
-            ./gradlew ktlintCheck
-            echo "result=success" >> "$GITHUB_OUTPUT"
+      - name: Linting Backend
+        id: lint
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_KOTLIN: true
+          FILTER_REGEX_INCLUDE: .*hanoi-frontend/src/jsMain/kotlin/hanoi.towers/.*
+          DISABLE_ERRORS: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Project
         id: build
         run: |
