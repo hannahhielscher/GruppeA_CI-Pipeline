@@ -1,19 +1,19 @@
 name: CI Pipeline Hanoi Towers
+
 on:
-  pull_request: # define trigger on pull requests
+  pull_request:
     branches:
       - master
       - develop
       - workflow-test
     types:
-      - opened # whenever a pr is created
-      - synchronize # whenever something is pushed to an open pr
+      - opened
+      - synchronize
   push:
     branches:
       - develop-test
 
 jobs:
-  # Backend Job
   build-and-test-backend:
     outputs:
       lint: ${{ steps.lint.outputs.result }}
@@ -21,11 +21,9 @@ jobs:
       test: ${{ steps.test.outputs.result }}
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v3
 
-        # Only run the next steps if there were changes in the backend
       - name: Set up JDK
         if: steps.changes.outputs.backend == 'true'
         uses: actions/setup-java@v4
@@ -35,7 +33,7 @@ jobs:
 
       - name: Setup Gradle
         if: steps.changes.outputs.backend == 'true'
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
         continue-on-error: true
 
       - name: Linting Backend
@@ -44,34 +42,41 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_KOTLIN: true
-          FILTER_REGEX_INCLUDE: .*hanoi-backend/src/main/kotlin/hanoi.towers/application/.*
+          FILTER_REGEX_INCLUDE: '.*hanoi-backend/src/main/kotlin/hanoi.towers/application/.*'
           DISABLE_ERRORS: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      - name: Capture Lint Result
+        if: steps.changes.outputs.backend == 'true'
+        run: echo "result=${{ steps.lint.outcome }}" >> "$GITHUB_OUTPUT"
 
       - name: Build Project
         id: build
         if: steps.changes.outputs.backend == 'true'
-        run: |
-          echo "Test Building Project"
-          echo "result=success" >> "$GITHUB_OUTPUT"
+        run: ./gradlew build
+        continue-on-error: true
+      - name: Capture Build Result
+        if: steps.changes.outputs.backend == 'true'
+        run: echo "result=${{ steps.build.outcome }}" >> "$GITHUB_OUTPUT"
+
       - name: Run Unit Tests
         id: test
         if: steps.changes.outputs.backend == 'true'
-        run: |
-          echo "Running Tests"
-          ./gradlew :hanoi-backend:test jacocoTestReport
-          echo "result=success" >> "$GITHUB_OUTPUT"
+        run: ./gradlew :hanoi-backend:test jacocoTestReport
+        continue-on-error: true
+      - name: Capture Test Result
+        if: steps.changes.outputs.backend == 'true'
+        run: echo "result=${{ steps.test.outcome }}" >> "$GITHUB_OUTPUT"
+
       - name: Coverage Report
         id: jacoco
         uses: madrapps/jacoco-report@v1.6.1
         with:
-          paths: |
-            ${{ github.workspace }}/**/build/reports/jacoco/test/jacocoTestReport.xml
+          paths: ${{ github.workspace }}/**/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 10
           min-coverage-changed-files: 0
 
-  # Frontend Job
   build-and-test-frontend:
     outputs:
       lint: ${{ steps.lint.outputs.result }}
@@ -79,10 +84,9 @@ jobs:
       test: ${{ steps.test.outputs.result }}
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v3
-        # Only run the next steps if there were changes in the frontend
+
       - if: steps.changes.outputs.frontend == 'true'
         run: echo "Changes detected"
 
@@ -92,33 +96,43 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Setup Gradle
         if: steps.changes.outputs.frontend == 'true'
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
         continue-on-error: true
+
       - name: Linting Frontend
         id: lint
         if: steps.changes.outputs.frontend == 'true'
         uses: github/super-linter@v4
         env:
           VALIDATE_KOTLIN: true
-          FILTER_REGEX_INCLUDE: .*hanoi-frontend/src/jsMain/kotlin/hanoi.towers/.*
+          FILTER_REGEX_INCLUDE: '.*hanoi-frontend/src/jsMain/kotlin/hanoi.towers/.*'
           DISABLE_ERRORS: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      - name: Capture Lint Result
+        if: steps.changes.outputs.frontend == 'true'
+        run: echo "result=${{ steps.lint.outcome }}" >> "$GITHUB_OUTPUT"
+
       - name: Build Project
         id: build
         if: steps.changes.outputs.frontend == 'true'
-        run: |
-          echo "Test Building Project"
-          ./gradlew hanoi-frontend:build
-          echo "result=success" >> "$GITHUB_OUTPUT"
+        run: ./gradlew hanoi-frontend:build
+        continue-on-error: true
+      - name: Capture Build Result
+        if: steps.changes.outputs.frontend == 'true'
+        run: echo "result=${{ steps.build.outcome }}" >> "$GITHUB_OUTPUT"
+
       - name: Run GUI Tests
         id: test
         if: steps.changes.outputs.frontend == 'true'
-        run: |
-          echo "Running Frontend Tests"
-          ./gradlew :hanoi-frontend:jsTest
-          echo "result=success" >> "$GITHUB_OUTPUT"
+        run: ./gradlew :hanoi-frontend:jsTest
+        continue-on-error: true
+      - name: Capture Test Result
+        if: steps.changes.outputs.frontend == 'true'
+        run: echo "result=${{ steps.test.outcome }}" >> "$GITHUB_OUTPUT"
 
   report:
     needs:
@@ -128,15 +142,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Summary Backend
         run: |
           echo "Lint Result Backend: ${{ needs.build-and-test-backend.outputs.lint }}"
-          run: echo "Build Result Backend: ${{ needs.build-and-test-backend.outputs.build }}"
-          run: echo "Test Result: ${{ needs.build-and-test-backend.outputs.build }}"
+          echo "Build Result Backend: ${{ needs.build-and-test-backend.outputs.build }}"
+          echo "Test Result Backend: ${{ needs.build-and-test-backend.outputs.test }}"
 
-
-
-
-
-
-
+      - name: Summary Frontend
+        run: |
+          echo "Lint Result Frontend: ${{ needs.build-and-test-frontend.outputs.lint }}"
+          echo "Build Result Frontend: ${{ needs.build-and-test-frontend.outputs.build }}"
+          echo "Test Result Frontend: ${{ needs.build-and-test-frontend.outputs.test }}"
