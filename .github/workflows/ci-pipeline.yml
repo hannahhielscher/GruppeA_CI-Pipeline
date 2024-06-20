@@ -23,22 +23,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
       - name: Set up JDK
-
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
       - name: Setup Gradle
-
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
         continue-on-error: true
-
       - name: Linting Backend
         id: lint
-
         uses: github/super-linter@v4
         env:
           VALIDATE_KOTLIN: true
@@ -47,27 +41,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
       - name: Capture Lint Result
-        if: steps.changes.outputs.backend == 'true'
         run: echo "result=${{ steps.lint.outcome }}" >> "$GITHUB_OUTPUT"
-
       - name: Build Project
         id: build
-
         run: ./gradlew build
         continue-on-error: true
       - name: Capture Build Result
-
         run: echo "result=${{ steps.build.outcome }}" >> "$GITHUB_OUTPUT"
-
       - name: Run Unit Tests
         id: test
-
         run: ./gradlew :hanoi-backend:test jacocoTestReport
         continue-on-error: true
       - name: Capture Test Result
-
         run: echo "result=${{ steps.test.outcome }}" >> "$GITHUB_OUTPUT"
-
       - name: Coverage Report
         id: jacoco
         uses: madrapps/jacoco-report@v1.6.1
@@ -86,25 +72,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-
         run: echo "Changes detected"
-
       - name: Set up JDK
-
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
       - name: Setup Gradle
-
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
         continue-on-error: true
-
       - name: Linting Frontend
         id: lint
-
         uses: github/super-linter@v4
         env:
           VALIDATE_KOTLIN: true
@@ -113,25 +91,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
       - name: Capture Lint Result
-
         run: echo "result=${{ steps.lint.outcome }}" >> "$GITHUB_OUTPUT"
-
       - name: Build Project
         id: build
-
         run: ./gradlew hanoi-frontend:build
         continue-on-error: true
       - name: Capture Build Result
-
         run: echo "result=${{ steps.build.outcome }}" >> "$GITHUB_OUTPUT"
-
       - name: Run GUI Tests
         id: test
-
         run: ./gradlew :hanoi-frontend:jsTest
         continue-on-error: true
       - name: Capture Test Result
-
         run: echo "result=${{ steps.test.outcome }}" >> "$GITHUB_OUTPUT"
 
   report:
