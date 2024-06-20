@@ -21,14 +21,7 @@ jobs:
       test: ${{ steps.test.outputs.result }}
     runs-on: ubuntu-latest
     steps:
-      - uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            backend:
-            - 'hanoi-backend/**'
-            frontend:
-            - 'hanoi-frontend/**'
+
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -84,14 +77,6 @@ jobs:
       test: ${{ steps.test.outputs.result }}
     runs-on: ubuntu-latest
     steps:
-      - uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            backend:
-            - 'hanoi-backend/**'
-            frontend:
-            - 'hanoi-frontend/**'
 
       - name: Checkout code
         uses: actions/checkout@v3
