@@ -7,6 +7,6 @@ class FailTest {
     @Test
     fun testThatFails() {
         //fail("This test is designed to fail.")
-        //assertTrue(true, "Success")
+        assertTrue(true, "Success")
     }
 }

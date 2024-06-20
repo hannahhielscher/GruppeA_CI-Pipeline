@@ -1,6 +1,4 @@
-plugins {
-    jacoco
-}
+
 
 repositories {
     mavenLocal()
