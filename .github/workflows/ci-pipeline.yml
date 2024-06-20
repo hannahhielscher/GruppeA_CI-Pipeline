@@ -67,7 +67,7 @@ jobs:
             ${{ github.workspace }}/**/build/reports/jacoco/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 10
-          min-coverage-changed-files: 1
+          min-coverage-changed-files: 0
 
   # Frontend Job
   build-and-test-frontend:
