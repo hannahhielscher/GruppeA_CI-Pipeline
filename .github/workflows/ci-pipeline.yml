@@ -143,7 +143,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Summary Backend
+      - name: Summary Backen
         run: |
           echo "Lint Result Backend: ${{ needs.build-and-test-backend.outputs.lint }}"
           echo "Build Result Backend: ${{ needs.build-and-test-backend.outputs.build }}"
