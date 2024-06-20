@@ -8,9 +8,9 @@ on:
     types:
       - opened # whenever a pr is created
       - synchronize # whenever something is pushed to an open pr
-    push:
-      branches:
-        - develop-test
+  push:
+    branches:
+      - develop-test
 
 jobs:
   # Backend Job
