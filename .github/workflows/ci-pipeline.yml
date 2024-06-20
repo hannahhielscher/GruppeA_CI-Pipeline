@@ -129,7 +129,7 @@ jobs:
         id: test
         if: steps.changes.outputs.frontend == 'true'
         run: |
-          echo "Running Tests"
+          echo "Running Frontend Tests"
           ./gradlew :hanoi-frontend:jsTest
           echo "result=success" >> "$GITHUB_OUTPUT"
 
