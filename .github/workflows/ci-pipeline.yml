@@ -22,7 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -33,10 +32,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Setup Gradle
         if: steps.changes.outputs.backend == 'true'
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
         continue-on-error: true
+
       - name: Linting Backend
         id: lint
         if: steps.changes.outputs.backend == 'true'
@@ -46,6 +47,7 @@ jobs:
           FILTER_REGEX_INCLUDE: .*hanoi-backend/src/main/kotlin/hanoi.towers/application/.*
           DISABLE_ERRORS: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build Project
         id: build
         if: steps.changes.outputs.backend == 'true'
@@ -64,7 +66,7 @@ jobs:
         uses: madrapps/jacoco-report@v1.6.1
         with:
           paths: |
-            ${{ github.workspace }}/**/build/reports/jacoco/jacocoTestReport.xml
+            ${{ github.workspace }}/**/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 10
           min-coverage-changed-files: 0
@@ -117,6 +119,22 @@ jobs:
           echo "Running Frontend Tests"
           ./gradlew :hanoi-frontend:jsTest
           echo "result=success" >> "$GITHUB_OUTPUT"
+
+  report:
+    needs:
+      - build-and-test-frontend
+      - build-and-test-backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Summary Backend
+        run: |
+          echo "Lint Result Backend: ${{ needs.build-and-test-backend.outputs.lint }}"
+          run: echo "Build Result Backend: ${{ needs.build-and-test-backend.outputs.build }}"
+          run: echo "Test Result: ${{ needs.build-and-test-backend.outputs.build }}"
+
+
 
 
 
